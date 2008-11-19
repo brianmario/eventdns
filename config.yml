@@ -1,0 +1,3 @@
+bind_to: 'localhost'
+driver: 'sqlite3'
+path: 'examples/dns.sqlite3'
