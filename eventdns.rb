@@ -1,3 +1,4 @@
+
 require 'rubygems'
 require 'yaml'
 require 'logger'
@@ -19,7 +20,7 @@ class EventDns < EM::Connection
     @port = host.shift
     @host = host.join(".")
     
-    LOGGER.info "#{self.client_info} connected"
+    LOGGER.info "Incoming packet from: #{client_info}"
   end
   
   def client_info
@@ -35,7 +36,6 @@ class EventDns < EM::Connection
       rescue Exception => e
         LOGGER.error "Error decoding packet: #{e.inspect}"
         LOGGER.error e.backtrace.join("\r\n")
-        close_connection
         return
       end
       
@@ -52,9 +52,6 @@ class EventDns < EM::Connection
       rescue Exception => e
         LOGGER.error "Error decoding packet: #{e.inspect}"
         LOGGER.error e.backtrace.join("\r\n")
-      ensure
-        close_connection_after_writing
-        LOGGER.info "#{self.client_info} disconnected"
       end
     end
   end
@@ -73,35 +70,7 @@ EM.run {
   rescue Exception => e
     LOGGER.fatal "#{e.inspect}"
     LOGGER.fatal e.backtrace.join("\r\n")
+    LOGGER.fatal "Do you need root access?"
     EM.stop_event_loop
   end
 }
-
-# module Syckass
-#   module DNSServer
-#     require 'dnsruby'
-#     
-#     # gracefully capture CTRL+C
-#     trap("INT") {
-#       puts "ctrl+c caught, stopping server"
-#       EventMachine::stop_event_loop
-#     }
-# 
-#     def receive_data(data)
-#       if data.length > 0
-#         packet = Dnsruby::Message.decode(data)
-#         puts "packet received, and parsed:"
-#         puts packet.inspect
-#         
-#         # TODO: implement record lookup in DB based on question packet
-#         packet.add_answer(Dnsruby::RR.create("w. 360 IN A 127.0.0.1"))
-#         puts "sending response:"
-#         puts packet.inspect
-#         send_data(packet.encode)
-#         puts "response sent"
-#       else
-#         puts "zero-length packet received, ignoring... (it's ok, the UDP spec allows for zero-length packets)"
-#       end
-#     end
-#   end
-# end
