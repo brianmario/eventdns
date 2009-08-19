@@ -52,7 +52,7 @@ class EventDns < EventMachine::Connection
       end
       
       begin
-        send_data(packet.encode)
+        send_datagram(packet.encode, host, port)
       rescue Exception => e
         $logger.error "Error decoding packet: #{e.inspect}"
         $logger.error e.backtrace.join("\r\n")
