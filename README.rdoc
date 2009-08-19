@@ -6,23 +6,30 @@ Currently, I plan on taking full advantage of the ruby language in combination w
 to eventually have a fully RFC 1035 compliant DNS server.
 
 == Goals
- * Dynamic configuration
-  * database
-  * web service(s)
-  * monitored flat-file(s)
- * Caching
-  * in-memory
-  * memcached
- * API
-  * REST? (json/xml)
-  * TCP? (json/xml)
+
+=== Dynamic configuration
+
+* database
+* web service(s)
+* monitored flat-file(s)
+
+=== Caching
+
+* in-memory
+* memcached
+
+=== API
+
+* REST? (json/xml)
+* TCP? (json/xml)
 
 == Dreams
- * everything written in C
+
+* everything written in C
 
 == Requirements
- * gems
-  * logging
-  * eventmachine
-  * dnsruby
- * a sweet bike
+
+* logging
+* eventmachine
+* dnsruby
+* a sweet bike
