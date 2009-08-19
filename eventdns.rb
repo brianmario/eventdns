@@ -1,18 +1,20 @@
+# encoding: UTF-8
+
+require 'yaml'
 
 require 'rubygems'
-require 'yaml'
-require 'logger'
+require 'logging'
 require 'eventmachine'
 require 'dnsruby'
-
-LOGGER = Logger.new(STDOUT)
-LOGGER.level = Logger::DEBUG
 
 # daemonize changes the directory to "/"
 Dir.chdir(File.dirname(__FILE__))
 CONFIG = YAML.load_file('config.yml')
 
-class EventDns < EM::Connection
+$logger = Logging.logger(STDOUT)
+$logger.level = CONFIG[:log_level]
+
+class EventDns < EventMachine::Connection
   attr_accessor :host, :port
   
   def new_connection
@@ -20,7 +22,7 @@ class EventDns < EM::Connection
     @port = host.shift
     @host = host.join(".")
     
-    LOGGER.info "Incoming packet from: #{client_info}"
+    $logger.info "Incoming packet from: #{client_info}"
   end
   
   def client_info
@@ -34,43 +36,46 @@ class EventDns < EM::Connection
       begin
         packet = Dnsruby::Message.decode(data)
       rescue Exception => e
-        LOGGER.error "Error decoding packet: #{e.inspect}"
-        LOGGER.error e.backtrace.join("\r\n")
+        $logger.error "Error decoding packet: #{e.inspect}"
+        $logger.error e.backtrace.join("\r\n")
         return
       end
       
       packet.question.each do |q|
-        LOGGER.debug "#{self.client_info} requested an #{q.qtype} record for #{q.qname}"
+        $logger.debug "#{client_info} requested an #{q.qtype} record for #{q.qname}"
         
-        LOGGER.debug "#{q.qname} is 127.0.0.1, handing back to client"
         # TODO: implement record lookup in DB based on question packet
-        packet.add_answer(Dnsruby::RR.create("#{q.qname}. 360 IN A 127.0.0.1"))
+        $logger.debug "#{q.qname} is 127.0.0.1, handing back to client"
+        record = Dnsruby::RR.create(:name => q.qname, :type => "A", :ttl => 360, :address => "127.0.0.1")
+        packet.add_answer(record)
+        packet.add_authority(record)
       end
       
       begin
         send_data(packet.encode)
       rescue Exception => e
-        LOGGER.error "Error decoding packet: #{e.inspect}"
-        LOGGER.error e.backtrace.join("\r\n")
+        $logger.error "Error decoding packet: #{e.inspect}"
+        $logger.error e.backtrace.join("\r\n")
       end
     end
   end
   
 end
 
-EM.run {
+EventMachine.run {
   trap("INT") {
-    LOGGER.info "ctrl+c caught, stopping server"
-    EM.stop_event_loop
+    $logger.info "ctrl+c caught, stopping server"
+    EventMachine.stop_event_loop
   }
   begin
-    EM.epoll
-    EM.open_datagram_socket(CONFIG['bind_to'], 53, EventDns)
-    LOGGER.info "EventDns started"
+    EventMachine.epoll
+    EventMachine.kqueue
+    EventMachine.open_datagram_socket(CONFIG[:bind_to], 53, EventDns)
+    $logger.info "EventDns started"
   rescue Exception => e
-    LOGGER.fatal "#{e.inspect}"
-    LOGGER.fatal e.backtrace.join("\r\n")
-    LOGGER.fatal "Do you need root access?"
-    EM.stop_event_loop
+    $logger.fatal "#{e.inspect}"
+    $logger.fatal e.backtrace.join("\r\n")
+    $logger.fatal "Do you need root access?"
+    EventMachine.stop_event_loop
   end
 }

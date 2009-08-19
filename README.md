@@ -22,12 +22,12 @@ Goals
 
 Dreams
 ------
-* make use of drb
 * everything written in C
 
 Requirements
 ------------
 * gems
+ * logging
  * eventmachine
  * dnsruby
 * a sweet bike
