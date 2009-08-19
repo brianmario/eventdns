@@ -18,7 +18,8 @@ class EventDns < EventMachine::Connection
   attr_accessor :host, :port
   
   def new_connection
-    host = self.get_peername[2,6].unpack("nC4") #http://nhw.pl/wp/2007/12/07/eventmachine-how-to-get-clients-ip-address
+    # http://nhw.pl/wp/2007/12/07/eventmachine-how-to-get-clients-ip-address
+    host = get_peername[2,6].unpack("nC4")
     @port = host.shift
     @host = host.join(".")
     
