@@ -1,4 +1,6 @@
-:bind_to: '0.0.0.0'
+:bind_address: '0.0.0.0'
+:bind_port: 1053
+
 :driver: 'sqlite3'
 :path: 'dns.sqlite3'
 :log_level: :debug

@@ -71,7 +71,7 @@ EventMachine.run {
   begin
     EventMachine.epoll
     EventMachine.kqueue
-    EventMachine.open_datagram_socket(CONFIG[:bind_to], 53, EventDns)
+    EventMachine.open_datagram_socket(CONFIG[:bind_address], CONFIG[:bind_port], EventDns)
     $logger.info "EventDns started"
   rescue Exception => e
     $logger.fatal "#{e.inspect}"
