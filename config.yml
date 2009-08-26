@@ -1,6 +1,7 @@
 :bind_address: '0.0.0.0'
 :bind_port: 1053
-
-:driver: 'sqlite3'
-:path: 'dns.sqlite3'
+:driver: 'httprr'
+:base_url: 'http://viadns.org/examples/'
+# :driver: 'sqlite3'
+# :path: 'dns.sqlite3'
 :log_level: :debug

@@ -1,0 +1,5 @@
+[{"type":"A","ttl":1,"class":"IN","name":"test.dom","rdata":"0.0.0.0"},
+ {"type":"CNAME","ttl":1,"class":"IN","name":"test.dom","rdata":"cname.example.com."},
+ {"type":"NS","ttl":1,"class":"IN","name":"test.dom","rdata":"ns.example.com."},
+ {"type":"PTR","ttl":1,"class":"IN","name":"test.dom","rdata":"ptr.example.com"},
+ {"type":"TXT","ttl":1,"class":"IN","name":"test.dom","rdata":"the quick brown fox jumped over the lazy dog."}]

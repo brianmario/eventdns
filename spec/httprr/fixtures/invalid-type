@@ -1,0 +1,1 @@
+[{"type":"A","ttl":1,"class":"IN","name":"test.dom","rdata":"0.0.0.0"},{"type":"AAAA","ttl":1,"class":"IN","name":"test.dom","rdata":"0.0.0.0"},{"type":"CHIMP","ttl":1,"class":"IN","name":"test.dom","rdata":"0.0.0.0"}]

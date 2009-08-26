@@ -5,6 +5,10 @@ My goal of this project (to start) is nothing more than to learn how to write a 
 Currently, I plan on taking full advantage of the ruby language in combination with EventMachine's sweetness
 to eventually have a fully RFC 1035 compliant DNS server.
 
+== HTTP RR backend
+
+* enabled by default, test using 'dig @127.0.0.1 -p 1053 pi.viadns.org' or 'dig @127.0.0.1 -p 1053 gmail.viadns.org'
+
 == Goals
 
 === Dynamic configuration
