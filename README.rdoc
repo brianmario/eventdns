@@ -7,7 +7,9 @@ to eventually have a fully RFC 1035 compliant DNS server.
 
 == HTTP RR backend
 
-* enabled by default, test using 'dig @127.0.0.1 -p 1053 pi.viadns.org' or 'dig @127.0.0.1 -p 1053 gmail.viadns.org'
+* enabled by default, test using:
+** dig @127.0.0.1 -p 1053 pi.viadns.org
+** dig @127.0.0.1 -p 1053 gmail.viadns.org
 
 == Goals
 
