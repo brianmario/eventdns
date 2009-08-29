@@ -3,3 +3,5 @@ Modify EventDns to run an example query at start, to make sure that the backend 
 Write tests for the EventDns class.
 
 Fix the path names for the spec stuff. Not httprr anymore!
+
+Fail gracefully when the result isn't 200 or 404.
