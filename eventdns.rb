@@ -26,7 +26,7 @@ def handle_question_via_httprr(q,packet)
 
   url = CONFIG[:base_url].to_s + q.qname.to_s
   $logger.debug "Looking up: '#{url}'"
-  query = HTTPRRArray.new(url)
+  query = HTTPZone.new(url)
   unless query.valid?
     $logger.debug "Sending NXDomain"
     packet.header.rcode='NXDomain'

@@ -1,13 +1,13 @@
 # encoding: UTF-8
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
-describe HTTPRRArray do
+describe HTTPZone do
   before(:all) do
     @fixture = File.dirname(__FILE__) + '/fixtures/'
   end
 
   it "correctly parses example Gmail results" do
-    @dns = HTTPRRArray.new(@fixture + 'gmail')
+    @dns = HTTPZone.new(@fixture + 'gmail')
     @dns.results[1].name.should  == 'example.com'
     @dns.results[1].ttl.should   == 3600
     @dns.results[1].type.should  == 'MX'
@@ -15,38 +15,38 @@ describe HTTPRRArray do
   end
 
   it "correctly handles bad input: invalid type" do
-    @dns = HTTPRRArray.new(@fixture + 'invalid-type')
+    @dns = HTTPZone.new(@fixture + 'invalid-type')
     @dns.valid?.should  == false
   end
 
   it "correctly handles bad input: invalid name" do
-    @dns = HTTPRRArray.new(@fixture + 'invalid-name')
+    @dns = HTTPZone.new(@fixture + 'invalid-name')
     @dns.valid?.should  == false
   end
 
   it "correctly validates good input: example Gmail results" do
-    @dns = HTTPRRArray.new(@fixture + 'gmail')
+    @dns = HTTPZone.new(@fixture + 'gmail')
     @dns.valid?.should == true
   end
 
   it "correctly validates good input: valid types" do
-    @dns = HTTPRRArray.new(@fixture + 'valid-type')
+    @dns = HTTPZone.new(@fixture + 'valid-type')
     @dns.valid?.should  == true
   end
 
   it "can handle valid? being called more than once" do
-    @dns = HTTPRRArray.new(@fixture + 'valid-type')
+    @dns = HTTPZone.new(@fixture + 'valid-type')
     @dns.valid?.should  == true
     @dns.valid?.should  == true
     @dns.valid?.should  == true
   end
 
   it "correctly handles 404s" do
-    @dns = HTTPRRArray.new('http://example.com/404')
+    @dns = HTTPZone.new('http://example.com/404')
     @dns.valid?.should == false
   end
 
-end # HTTPRRArray
+end # HTTPZone
 
 describe HTTPRR do
   before(:all) do

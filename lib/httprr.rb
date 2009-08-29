@@ -10,7 +10,7 @@ LOGGER = Logger.new(STDOUT)
 #LOGGER.level = Logger::WARN
 LOGGER.level = Logger::FATAL
 
-class HTTPRRArray
+class HTTPZone
   attr_reader :results
   def initialize(url)
     begin
