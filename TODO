@@ -1,3 +1,5 @@
 Modify EventDns to run an example query at start, to make sure that the backend is working.
 
 Write tests for the EventDns class.
+
+Fix the path names for the spec stuff. Not httprr anymore!
