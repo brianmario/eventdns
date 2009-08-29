@@ -31,8 +31,10 @@ end # is_domain_name
     
 module Backend
   module HTTP
-    def lookup(query)
-      url = ''
+    def lookup(query,base_url='http://example.com/')
+      url = base_url + query[:name] + "?type=#{query[:type]}"
+      LOGGER.debug "Looking up Zone: #{url}"
+      return Zone.new(url)
     end # lookup
 
     class Zone

@@ -1,6 +1,31 @@
 # encoding: UTF-8
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
+describe Backend::HTTP, "lookup" do
+  include Backend::HTTP
+
+  before(:all) do
+    query = { :name => 'pi.viadns.org', :type => 'A' }
+    base_url = 'http://viadns.org/examples/'
+    @result = lookup(query,base_url)
+  end
+  
+  it "returns a Backend::HTTP::Zone" do
+    @result.class.should == Backend::HTTP::Zone
+  end
+
+  it "is valid" do
+    @result.valid?.should == true
+  end
+
+  it "has valid results" do
+    @result.results[0].name.should == 'pi.viadns.org'
+    @result.results[0].ttl.should == 314
+    @result.results[0].type.should == 'A'
+    @result.results[0].rdata.should == '3.14.159.26'
+  end
+end
+
 describe Backend::HTTP::Zone do
   before(:all) do
     @fixture = File.dirname(__FILE__) + '/fixtures/'
