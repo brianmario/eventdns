@@ -6,9 +6,9 @@ require 'pp'
 require 'logger'
 
 LOGGER = Logger.new(STDOUT)
-#LOGGER.level = Logger::DEBUG
+LOGGER.level = Logger::DEBUG
 #LOGGER.level = Logger::WARN
-LOGGER.level = Logger::FATAL
+#LOGGER.level = Logger::FATAL
 
 class String
   def octets
@@ -31,11 +31,13 @@ end # is_domain_name
     
 module Backend
   module HTTP
-    def lookup(query,base_url='http://example.com/')
-      url = base_url + query[:name] + "?type=#{query[:type]}"
-      LOGGER.debug "Looking up Zone: #{url}"
-      return Zone.new(url)
-    end # lookup
+    class Lookup
+      def query(query,base_url='http://example.com/')
+        url = base_url + "#{query[:name]}?type=#{query[:type]}"
+        LOGGER.debug "Looking up URL: #{url}"
+        return Zone.new(url)
+      end
+    end # Lookup
 
     class Zone
       attr_reader :results

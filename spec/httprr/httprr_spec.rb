@@ -1,13 +1,12 @@
 # encoding: UTF-8
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
-describe Backend::HTTP, "lookup" do
-  include Backend::HTTP
-
+describe Backend::HTTP::Lookup do
   before(:all) do
     query = { :name => 'pi.viadns.org', :type => 'A' }
     base_url = 'http://viadns.org/examples/'
-    @result = lookup(query,base_url)
+    lookup = Backend::HTTP::Lookup.new
+    @result = lookup.query(query,base_url)
   end
   
   it "returns a Backend::HTTP::Zone" do
