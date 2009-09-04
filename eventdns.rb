@@ -32,6 +32,10 @@ class UseBackend
       $logger.error "Error running query: #{e.inspect}"
       query = nil
     end
+
+    packet.header.rd = false # No recursion please
+    packet.header.qr = true  # This is a Query Response
+    packet.header.aa = true  # This is an Authoritative Answer
       
     unless query.valid?
       $logger.debug "Sending NXDomain"
@@ -44,9 +48,6 @@ class UseBackend
       $logger.debug "Adding answer: #{result.to_s}"
       packet.add_answer(Dnsruby::RR.create(result.to_s))
     end
-
-    packet.header.qr = 1 # This is a Query Response
-    packet.header.aa = 1 # This is an Authoritative Answer
   end
 end # UseBackend
 
