@@ -19,8 +19,9 @@ class UseBackend
   def default(q,packet)
     $logger.debug "#{q.qname} is 127.0.0.1, handing back to client"
     record = Dnsruby::RR.create(:name => q.qname, :type => "A", :ttl => 360, :address => "127.0.0.1")
+    packet.header.qr = 1 # This is a Query Response
+    packet.header.aa = 1 # This is an Authoritative Answer
     packet.add_answer(record)
-    packet.add_authority(record)
   end
 
   def http(q,packet)
@@ -43,8 +44,9 @@ class UseBackend
       $logger.debug "Adding answer: #{result.to_s}"
       packet.add_answer(Dnsruby::RR.create(result.to_s))
     end
-    ## Do I need to do this?
-    # packet.add_authority(something)
+
+    packet.header.qr = 1 # This is a Query Response
+    packet.header.aa = 1 # This is an Authoritative Answer
   end
 end # UseBackend
 
