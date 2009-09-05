@@ -5,3 +5,9 @@ Write tests for the EventDns class.
 Fix the path names for the spec stuff. Not httprr anymore!
 
 Fail gracefully when the result isn't 200 or 404.
+
+Make sure we are sending results with the AA and QR bits set and with the RD bit NOT set.
+
+Validate all input. Send approprate error code on invalid input.
+
+Only allow the types of queries that tinydns would allow (one query per request, etc)
