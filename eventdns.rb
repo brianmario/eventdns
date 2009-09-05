@@ -33,10 +33,18 @@ class UseBackend
       query = nil
     end
 
-    packet.header.rd = false # No recursion please
-    packet.header.qr = true  # This is a Query Response
-    packet.header.aa = true  # This is an Authoritative Answer
-      
+    # We are always sending a Query Response
+    packet.header.qr = true
+
+    if q.qtype == 'SOA'
+      # Recursion Available
+      #FIXME: I'm only setting this for now since this flag always seems to be set on SOA replies ...
+      packet.header.ra = true 
+    else
+      # This is an Authoritative Answer
+      packet.header.aa = true 
+    end 
+
     unless query.valid?
       $logger.debug "Sending NXDomain"
       packet.header.rcode='NXDomain'
@@ -45,7 +53,7 @@ class UseBackend
   
     query.results.each do |result|
       return unless result.is_a? Backend::HTTP::RR
-      $logger.debug "Adding answer: #{result.to_s}"
+      $logger.debug "Adding answer: '#{result.to_s}'"
       packet.add_answer(Dnsruby::RR.create(result.to_s))
     end
   end
