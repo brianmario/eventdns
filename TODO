@@ -11,3 +11,5 @@ Make sure we are sending results with the AA and QR bits set and with the RD bit
 Validate all input. Send approprate error code on invalid input.
 
 Only allow the types of queries that tinydns would allow (one query per request, etc)
+
+Make sure that all names end in '.'

@@ -128,7 +128,7 @@ module Backend
         return true
       end
       def to_s
-        "%s. %d %s %s" % [self.name, self.ttl, self.type, self.rdata]
+        "%s %d %s %s" % [self.name, self.ttl, self.type, self.rdata]
       end
     end
     
