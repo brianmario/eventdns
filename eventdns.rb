@@ -7,6 +7,7 @@ require 'logging'
 require 'eventmachine'
 require 'dnsruby'
 require 'lib/Backend/http'
+require 'lib/simplecache'
 
 # daemonize changes the directory to "/"
 Dir.chdir(File.dirname(__FILE__))
@@ -17,11 +18,13 @@ $logger.level = CONFIG[:log_level]
 
 class UseBackend
   @backend = nil
+  @cache = nil
 
   def initialize(backend='default')
     #FIXME: Throw an error if the backend doesn't exist.
     #TODO: Eventually we should just look for a Backend::#{backend}::Lookup class
     @backend = backend.to_sym
+    @cache = SimpleCache.new()
   end
 
   def handle(q,packet)
@@ -37,12 +40,19 @@ class UseBackend
   end # default
 
   def http(q,packet)
-    begin
-      lookup = Backend::HTTP::Lookup.new()
-      query = lookup.query({:name => q.qname,:type => q.qtype},CONFIG[:base_url])
-    rescue Exception => e
-      $logger.error "Error running query: #{e.inspect}"
-      query = nil
+    key = "#{q.qname}-#{q.qtype}-#{CONFIG[:base_url]}"
+    query = @cache.get(key)
+    if query == nil # cache miss
+      $logger.debug "Cache miss :("
+      begin
+        lookup = Backend::HTTP::Lookup.new()
+        value = lookup.query({:name => q.qname,:type => q.qtype},CONFIG[:base_url])
+      rescue Exception => e
+        $logger.error "Error running query: #{e.inspect}"
+        value = nil
+      end
+      @cache.set(key,value)
+      query = value
     end
 
     # We are always sending a Query Response
@@ -121,12 +131,15 @@ class EventDns < EventMachine::Connection
   
 end
 
+#FIXME: On OS X (1Ghz PPC), queries take over 2000 miliseconds to complete. WTF?
 EventMachine.run {
   trap("INT") {
     $logger.info "ctrl+c caught, stopping server"
     EventMachine.stop_event_loop
   }
   begin
+    # These options are supposed to help things run better on Linux?
+    # http://eventmachine.rubyforge.org/docs/EPOLL.html
     EventMachine.epoll
     EventMachine.kqueue
     EventMachine.open_datagram_socket(CONFIG[:bind_address], CONFIG[:bind_port], EventDns)
