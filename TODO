@@ -1,17 +1,16 @@
-Modify EventDns to run an example query at start, to make sure that the backend is working.
+Backend::HTTP
+ - Fail gracefully when the result isn't 200 or 404.
+ - Validate all input. Send approprate error code on invalid input.
+ - Make sure that all names end in '.'
 
-Write tests for the EventDns class.
+eventdns.rb
+ - Run an example query at start, to make sure that the backend is working.
+ - Write tests for the EventDns class.
+ - Make sure we are sending results with the AA and QR bits set and with the RD bit NOT set.
+ - Only allow the types of queries that tinydns would allow (one query per request, etc)
 
-Fix the path names for the spec stuff. Not httprr anymore!
+General
+ - Fix the path names for the spec stuff. Not httprr anymore!
+ - Add tests for SimpleCache
 
-Fail gracefully when the result isn't 200 or 404.
 
-Make sure we are sending results with the AA and QR bits set and with the RD bit NOT set.
-
-Validate all input. Send approprate error code on invalid input.
-
-Only allow the types of queries that tinydns would allow (one query per request, etc)
-
-Make sure that all names end in '.'
-
-Add tests for SimpleCache
