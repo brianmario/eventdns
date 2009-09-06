@@ -5,6 +5,6 @@ Backend::HTTP
 
 eventdns.rb
  - Run an example query at start, to make sure that the backend is working.
- - Write tests for the EventDns class.
+ - Write more tests for the EventDns class.
  - Make sure we are sending results with the AA and QR bits set and with the RD bit NOT set.
  - Only allow the types of queries that tinydns would allow (one query per request, etc)
