@@ -16,13 +16,25 @@ $logger = Logging.logger(STDOUT)
 $logger.level = CONFIG[:log_level]
 
 class UseBackend
+  @backend = nil
+
+  def initialize(backend='default')
+    #FIXME: Throw an error if the backend doesn't exist.
+    #TODO: Eventually we should just look for a Backend::#{backend}::Lookup class
+    @backend = backend.to_sym
+  end
+
+  def handle(q,packet)
+    self.send @backend, q, packet
+  end # handle
+
   def default(q,packet)
     $logger.debug "#{q.qname} is 127.0.0.1, handing back to client"
     record = Dnsruby::RR.create(:name => q.qname, :type => "A", :ttl => 360, :address => "127.0.0.1")
     packet.header.qr = 1 # This is a Query Response
     packet.header.aa = 1 # This is an Authoritative Answer
     packet.add_answer(record)
-  end
+  end # default
 
   def http(q,packet)
     begin
@@ -56,11 +68,17 @@ class UseBackend
       $logger.debug "Adding answer: '#{result.to_s}'"
       packet.add_answer(Dnsruby::RR.create(result.to_s))
     end
-  end
+  end # http
+
 end # UseBackend
 
 class EventDns < EventMachine::Connection
+  @backend = nil
   attr_accessor :host, :port
+  def initialize
+    @backend = UseBackend.new(CONFIG[:driver])
+    $logger.debug "Handling query via the #{CONFIG[:driver]} Backend."
+  end
   
   def new_connection
     # http://nhw.pl/wp/2007/12/07/eventmachine-how-to-get-clients-ip-address
@@ -89,21 +107,7 @@ class EventDns < EventMachine::Connection
       
       packet.question.each do |q|
         $logger.debug "#{client_info} requested an #{q.qtype} record for #{q.qname}"
-
-        backend = UseBackend.new
-        $logger.debug "Handling query via the #{CONFIG[:driver]} Backend."
-        case CONFIG[:driver]
-        when 'sqlite3'
-          # TODO: implement record lookup in DB based on question packet
-          $logger.debug '(sqlite3 driver selected)'
-          backend.default(q,packet)
-        when 'http'
-          $logger.debug '(http driver selected)'
-          backend.http(q,packet)
-        else
-          $logger.debug "(default driver selected)"
-          backend.default(q,packet)
-        end
+        @backend.handle(q,packet)
       end
       
       begin

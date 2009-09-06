@@ -3,9 +3,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
 describe Backend::HTTP::Lookup do
   before(:all) do
-    query = { :name => 'pi.viadns.org', :type => 'A' }
+    query = { :name => 'pi.http.viadns.org', :type => 'A' }
 #    base_url = 'http://viadns.org/examples/'
-    base_url = 'http://localhost:8088/dns/records/'
+#    base_url = 'http://localhost:8088/dns/records/'
+    base_url = 'http://www.domdori.com/dns/records/'
     lookup = Backend::HTTP::Lookup.new
     @result = lookup.query(query,base_url)
   end
@@ -19,7 +20,7 @@ describe Backend::HTTP::Lookup do
   end
 
   it "has valid results" do
-    @result.results[0].name.should == 'pi.viadns.org.'
+    @result.results[0].name.should == 'pi.http.viadns.org.'
     @result.results[0].ttl.should == 314
     @result.results[0].type.should == 'A'
     @result.results[0].rdata.should == '3.14.159.26'
@@ -67,13 +68,13 @@ describe Backend::HTTP::Zone do
   end
 
   it "correctly handles 404s" do
-    pending("Doesn't work on an airplane")
+#    pending("Doesn't work on an airplane")
     @dns = Backend::HTTP::Zone.new('http://example.com/404')
     @dns.valid?.should == false
   end
 
   it "correctly constructs a query with the type in the URL" do
-    pending("Doesn't work on an airplane")
+#    pending("Doesn't work on an airplane")
     @dns = Backend::HTTP::Zone.new('http://example.com/404')
     @dns.valid?.should == false
   end
@@ -163,9 +164,10 @@ describe Backend::HTTP::RR do
     end
   end
 
+  #FIXME: Update the @rr fixture to include a trailing '.' in the name.
   it "correctly converts to a string" do
-    Backend::HTTP::RR.new(@rr).to_s.should == 'example.com. 0 A 0.0.0.0'
-    Backend::HTTP::RR.new(@rr.merge({'ttl'=>'10','type'=>'MX','rdata'=>'10 mx.example.com'})).to_s.should == 'example.com. 10 MX 10 mx.example.com'
+    Backend::HTTP::RR.new(@rr).to_s.should == 'example.com 0 A 0.0.0.0'
+    Backend::HTTP::RR.new(@rr.merge({'ttl'=>'10','type'=>'MX','rdata'=>'10 mx.example.com'})).to_s.should == 'example.com 10 MX 10 mx.example.com'
     
   end
 
