@@ -13,3 +13,5 @@ Validate all input. Send approprate error code on invalid input.
 Only allow the types of queries that tinydns would allow (one query per request, etc)
 
 Make sure that all names end in '.'
+
+Add tests for SimpleCache
