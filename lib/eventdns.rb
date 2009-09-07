@@ -22,27 +22,26 @@ class EventDns < EventMachine::Connection
   def receive_data(data)
     new_connection
     
-    if data.size > 0
-      begin
-        packet = Dnsruby::Message.decode(data)
-      rescue Exception => e
-        $logger.error "Error decoding packet: #{e.inspect}"
-        $logger.error e.backtrace.join("\r\n")
-        return
-      end
-      
-      packet.question.each do |q|
-        $logger.debug "#{client_info} requested an #{q.qtype} record for #{q.qname}"
-        @backend.handle(q,packet)
-      end
-      
-      begin
-        send_datagram(packet.encode, host, port)
-      rescue Exception => e
-        $logger.error "Error decoding packet: #{e.inspect}"
-        $logger.error e.backtrace.join("\r\n")
-      end
+    return unless data.size > 0
+
+    begin
+      packet = Dnsruby::Message.decode(data)
+    rescue Exception => e
+      $logger.error "Error decoding packet: #{e.inspect}"
+      return
     end
-  end
-  
-end
+    
+    packet.question.each do |q|
+      $logger.debug "#{client_info} requested an #{q.qtype} record for #{q.qname}"
+      @backend.handle(q,packet)
+    end
+    
+    begin
+      send_datagram(packet.encode, host, port)
+    rescue Exception => e
+      $logger.error "Error decoding packet: #{e.inspect}"
+      #$logger.error e.backtrace.join("\r\n")
+    end
+
+  end # receive_data
+end # EventDns
