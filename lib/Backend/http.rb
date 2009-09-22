@@ -5,11 +5,6 @@ require 'json'
 require 'pp'
 require 'logger'
 
-LOGGER = Logger.new(STDOUT)
-LOGGER.level = Logger::DEBUG
-#LOGGER.level = Logger::WARN
-#LOGGER.level = Logger::FATAL
-
 class String
   def octets
     count = 0
@@ -22,7 +17,7 @@ def is_domain_name(domain)
   # Regular expression from: http://www.shauninman.com/archive/2006/05/08/validating_domain_names (Thanks!)
   match = domain.match(/^([a-z0-9]([-a-z0-9]*[a-z0-9])?\.)+((a[cdefgilmnoqrstuwxz]|aero|arpa)|(b[abdefghijmnorstvwyz]|biz)|(c[acdfghiklmnorsuvxyz]|cat|com|coop)|d[ejkmoz]|(e[ceghrstu]|edu)|f[ijkmor]|(g[abdefghilmnpqrstuwy]|gov)|h[kmnrtu]|(i[delmnoqrst]|info|int)|(j[emop]|jobs)|k[eghimnprwyz]|l[abcikrstuvy]|(m[acdghklmnopqrstuvwxyz]|mil|mobi|museum)|(n[acefgilopruz]|name|net)|(om|org)|(p[aefghklmnrstwy]|pro)|qa|r[eouw]|s[abcdeghijklmnortvyz]|(t[cdfghjklmnoprtvwz]|travel)|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw])\.?$/i)
   if match == nil
-    LOGGER.warn "Domain '#{domain}' is invalid."
+    $logger.warn "Domain '#{domain}' is invalid."
     return false
   end
   
@@ -34,7 +29,7 @@ module Backend
     class Lookup
       def query(query,base_url='http://example.com/')
         url = base_url + "#{query[:name]}?type=#{query[:type]}"
-        LOGGER.debug "Looking up URL: #{url}"
+        $logger.debug "Looking up URL: #{url}"
         return Zone.new(url)
       end
     end # Lookup
@@ -47,7 +42,7 @@ module Backend
           @results = JSON.parse(rv.read)
           @results.map!{|result| RR.new(result)}
         rescue OpenURI::HTTPError => e
-          LOGGER.debug "Skipping error: #{e.message}"
+          $logger.debug "Skipping error: #{e.message}"
           @results = []
         end
       end # initialize
@@ -84,7 +79,7 @@ module Backend
         begin
           Integer(self.ttl)
         rescue ArgumentError
-          LOGGER.warn "Invalid TTL: '#{self.ttl}'"
+          $logger.warn "Invalid TTL: '#{self.ttl}'"
           return false
         end
         ttl = Integer(self.ttl)
@@ -100,7 +95,7 @@ module Backend
         begin
           rdata = RDATA.new(self.rdata)
         rescue Exception => e
-          LOGGER.warn "Error converting '#{self.rdata}' to RDATA: #{e}"
+          $logger.warn "Error converting '#{self.rdata}' to RDATA: #{e}"
           return false
         end
         max_rdata_octets = 2**16 - 1 # RDLENGTH is an unsigned 16 bit integer.
@@ -153,15 +148,15 @@ module Backend
         (mname,rname,serial,refresh,reetry,expire,minimum) = self.split(soa_regex)
 
         if mname === nil or rname === nil or serial === nil or refresh === nil or reetry === nil or expire === nil or minimum === nil
-          LOGGER.warn "SOA '#{self}' requires valid MNAME, RNAME, SERIAL, REFRESH, RETRY, EXPIRE, and MINIMUM fields."
+          $logger.warn "SOA '#{self}' requires valid MNAME, RNAME, SERIAL, REFRESH, RETRY, EXPIRE, and MINIMUM fields."
           return false
         end
         unless is_domain_name(mname)
-          LOGGER.warn "Please provide a name server that is the original or primary source of data for this zone."
+          $logger.warn "Please provide a name server that is the original or primary source of data for this zone."
           return false
         end
         unless is_domain_name(rname)
-          LOGGER.warn "Please provide the mailbox for the person responsible for this zone."
+          $logger.warn "Please provide the mailbox for the person responsible for this zone."
           return false
         end
 
@@ -173,23 +168,23 @@ module Backend
         minimum = minimum.to_i
 
         if serial <= 0 or serial > 2**32 - 1
-          LOGGER.warn "The serial must be an unsigned 32 bit integer."
+          $logger.warn "The serial must be an unsigned 32 bit integer."
           return false
         end
         if refresh < -2**31 + 1 or refresh > 2**31 - 1
-          LOGGER.warn "The refresh must be a signed 32 bit integer."
+          $logger.warn "The refresh must be a signed 32 bit integer."
           return false
         end
         if reetry < -2**31 + 1 or reetry > 2**31 - 1
-          LOGGER.warn "The retry must be a signed 32 bit integer."
+          $logger.warn "The retry must be a signed 32 bit integer."
           return false
         end
         if expire < -2**31 + 1 or expire > 2**31 - 1
-          LOGGER.warn "The expire must be a signed 32 bit integer."
+          $logger.warn "The expire must be a signed 32 bit integer."
           return false
         end
         if minimum < 0 or minimum > 2**32 - 1
-          LOGGER.warn "The minimum must be an unsigned 32 bit integer."
+          $logger.warn "The minimum must be an unsigned 32 bit integer."
           return false
         end
         return true
@@ -205,17 +200,17 @@ module Backend
         
         mx = self.match(/^([0-9]+)\ (.*?)$/)
         if mx == nil or mx[1] == nil or mx[2] == nil
-          LOGGER.warn "MX '#{self}' requires valid preference and exchange fields."
+          $logger.warn "MX '#{self}' requires valid preference and exchange fields."
           return false
         end
         preference = mx[1].to_i
         exchange = mx[2].to_s
         if preference > max_preference_value
-          LOGGER.warn "MX '#{self}' PREFERENCE value must not exceed #{max_preference_value}."
+          $logger.warn "MX '#{self}' PREFERENCE value must not exceed #{max_preference_value}."
           return false
         end
         if preference < min_preference_value
-          LOGGER.warn "MX '#{self}' PREFERENCE value must be greater than #{min_preference_value}."
+          $logger.warn "MX '#{self}' PREFERENCE value must be greater than #{min_preference_value}."
           return false
         end
         return false unless is_domain_name(exchange)

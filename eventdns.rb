@@ -15,13 +15,16 @@ require 'lib/eventdns'
 Dir.chdir(File.dirname(__FILE__))
 CONFIG = YAML.load_file('config.yml')
 
-$logger = Logging.logger(STDOUT)
+logfile = File.new(CONFIG[:log_file], 'w+')
+$logger = Logging.logger(logfile)
 $logger.level = CONFIG[:log_level]
 
 #FIXME: On OS X (1Ghz PPC), queries take over 2000 miliseconds to complete. WTF?
 EventMachine.run {
+  connection = nil
   trap("INT") {
     $logger.info "ctrl+c caught, stopping server"
+    connection.shutdown
     EventMachine.stop_event_loop
   }
   begin
@@ -29,13 +32,15 @@ EventMachine.run {
     # http://eventmachine.rubyforge.org/docs/EPOLL.html
     EventMachine.epoll
     EventMachine.kqueue
-    EventMachine.open_datagram_socket(CONFIG[:bind_address], CONFIG[:bind_port], EventDns)
+    connection = EventMachine.open_datagram_socket(CONFIG[:bind_address], CONFIG[:bind_port], EventDns)
+    $logger.info connection
     $logger.info "EventDns started"
     $logger.debug "Driver is: '#{CONFIG[:driver]}'"
   rescue Exception => e
     $logger.fatal "#{e.inspect}"
     $logger.fatal e.backtrace.join("\r\n")
     $logger.fatal "Do you need root access?"
+    connection.shutdown
     EventMachine.stop_event_loop
   end
 }

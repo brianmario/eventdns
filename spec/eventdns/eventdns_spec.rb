@@ -30,6 +30,7 @@ CONFIG = {
   :bind_port => 1053,
   :driver => 'default',
   :base_url => 'http://www.domdori.com/dns/records/',
+  :pid_file => 'log/test.pid',
 }
 
 $logger = Logging.logger(STDOUT)
@@ -126,6 +127,19 @@ describe EventDns do
     answers['memes.http.viadns.org'].should == ['All your base are belong to us',
                                                 'Badger Badger Badger', 
                                                 'Jia Junpeng, your mother is calling you home for dinner']
+  end
+
+  it "writes it's PID to a file" do 
+    pid = File.read(CONFIG[:pid_file]).chomp.to_i
+    pid.should == Process.pid
+  end
+
+  it "cleans up it's PID file when the shutdown method is called" do
+    dns = EventDns.new()
+    pid = File.read(CONFIG[:pid_file]).chomp.to_i
+    pid.should == Process.pid
+    dns.shutdown
+    File.exist?(CONFIG[:pid_file]).should == false
   end
 
 ## I'm not sure what sorts of tests to use here ... 

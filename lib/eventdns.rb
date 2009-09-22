@@ -25,7 +25,10 @@ class EventDns < EventMachine::Connection
     else
       $logger.debug "Test successful!"
     end
-      
+
+    # Write our PID to a file.
+    File.open(CONFIG[:pid_file], 'w') {|f| f.write(Process.pid) }
+
   end
   
   def new_connection
@@ -66,4 +69,10 @@ class EventDns < EventMachine::Connection
     end
 
   end # receive_data
+
+  def shutdown
+    raise RuntimeError, "pid_file not defined in configuration" unless CONFIG[:pid_file]
+    File.delete(CONFIG[:pid_file])
+  end #shutdown
+
 end # EventDns

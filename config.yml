@@ -6,4 +6,6 @@
 #:base_url: 'http://viadns.org/examples/'
 # :driver: 'sqlite3'
 # :path: 'dns.sqlite3'
+:pid_file: 'pid/eventdns.pid'
+:log_file: 'log/eventdns.log'
 :log_level: :debug
