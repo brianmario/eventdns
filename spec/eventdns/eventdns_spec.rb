@@ -31,6 +31,7 @@ CONFIG = {
   :backend => 'default',
   :base_url => 'http://www.domdori.com/dns/records/',
   :pid_file => 'log/test.pid',
+  :startup_test => ['pi.http.viadns.org','3.14.159.26'],
 }
 
 $logger = Logging.logger(STDOUT)

@@ -1,3 +1,6 @@
+:startup_test:
+- 'pi.http.viadns.org'
+- '3.14.159.26'
 :bind_address: '0.0.0.0'
 :bind_port: 1053
 :backend: 'http'

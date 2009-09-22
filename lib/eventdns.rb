@@ -6,24 +6,20 @@ class EventDns < EventMachine::Connection
     $logger.debug "Handling query via the #{CONFIG[:backend]} Backend."
 
     return unless CONFIG[:backend] == 'http'
+    raise LoadError, "Please define a startup test" unless CONFIG[:startup_test].is_a? Array
 
     # Push a test query through our driver to make sure we have connectivity.
-    #FIXME: This needs to get cleaned up, made smaller, or something.
-    test = Dnsruby::Message.new
-    test.add_question('pi.http.viadns.org', Dnsruby::Types.A, Dnsruby::Classes.IN)
+    domain = CONFIG[:startup_test][0] # example: 'pi.http.viadns.org'
+    answer = CONFIG[:startup_test][1] # example: '3.14.159.26'
 
+    test = Dnsruby::Message.new
+    test.add_question(domain, Dnsruby::Types.A, Dnsruby::Classes.IN)
     test.question.each do |q|
-      $logger.debug "Startup test: Requesting an #{q.qtype} record for #{q.qname}"
       @backend.handle(q,test)
     end
 
-    error = false
-    error = true unless test.answer[0].name.to_s == 'pi.http.viadns.org'
-    error = true unless test.answer[0].address.to_s == '3.14.159.26'
-    if error
-      raise LoadError, "Unable to run test query!"
-    else
-      $logger.debug "Test successful!"
+    unless test.answer[0].name.to_s == domain &&  test.answer[0].address.to_s == answer
+      raise LoadError, "Test query for #{domain} failed."
     end
 
     # Write our PID to a file.
