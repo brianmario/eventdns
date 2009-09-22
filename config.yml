@@ -1,7 +1,6 @@
 :bind_address: '0.0.0.0'
 :bind_port: 1053
-#FIXME: rename this to backend
-:driver: 'http'
+:backend: 'http'
 :base_url: 'http://www.domdori.com/dns/records/'
 #:base_url: 'http://viadns.org/examples/'
 # :driver: 'sqlite3'

@@ -41,7 +41,7 @@ EventMachine.run {
     EventMachine.kqueue
     connection = EventMachine.open_datagram_socket(CONFIG[:bind_address], CONFIG[:bind_port], EventDns)
     $logger.info "EventDns started"
-    $logger.debug "Driver is: '#{CONFIG[:driver]}'"
+    $logger.debug "Backend is: '#{CONFIG[:backend]}'"
   rescue Exception => e
     $logger.fatal "#{e.inspect}"
     $logger.fatal e.backtrace.join("\r\n")

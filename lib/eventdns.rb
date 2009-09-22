@@ -2,10 +2,10 @@ class EventDns < EventMachine::Connection
   @backend = nil
   attr_accessor :host, :port
   def initialize
-    @backend = UseBackend.new(CONFIG[:driver])
-    $logger.debug "Handling query via the #{CONFIG[:driver]} Backend."
+    @backend = UseBackend.new(CONFIG[:backend])
+    $logger.debug "Handling query via the #{CONFIG[:backend]} Backend."
 
-    return unless CONFIG[:driver] == 'http'
+    return unless CONFIG[:backend] == 'http'
 
     # Push a test query through our driver to make sure we have connectivity.
     #FIXME: This needs to get cleaned up, made smaller, or something.

@@ -28,7 +28,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../lib/usebackend.rb')
 CONFIG = {
   :bind_address => '0.0.0.0',
   :bind_port => 1053,
-  :driver => 'default',
+  :backend => 'default',
   :base_url => 'http://www.domdori.com/dns/records/',
   :pid_file => 'log/test.pid',
 }
@@ -97,7 +97,7 @@ describe EventDns do
   it "can resolve pi.http.viadns.org using the HTTP backend" do
     message = Dnsruby::Message.new
     message.add_question('pi.http.viadns.org', Dnsruby::Types.A, Dnsruby::Classes.IN)
-    CONFIG[:driver] = 'http'
+    CONFIG[:backend] = 'http'
     dns = EventDns.new()
     dns.receive_data(message.encode).should_not == nil
     results = dns.send_datagram_results
