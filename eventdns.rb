@@ -6,6 +6,8 @@ require 'rubygems'
 require 'logging'
 require 'eventmachine'
 require 'dnsruby'
+
+$LOAD_PATH.push(File.dirname(__FILE__))
 require 'lib/Backend/http'
 require 'lib/simplecache'
 require 'lib/usebackend'
@@ -33,14 +35,12 @@ EventMachine.run {
     EventMachine.epoll
     EventMachine.kqueue
     connection = EventMachine.open_datagram_socket(CONFIG[:bind_address], CONFIG[:bind_port], EventDns)
-    $logger.info connection
     $logger.info "EventDns started"
     $logger.debug "Driver is: '#{CONFIG[:driver]}'"
   rescue Exception => e
     $logger.fatal "#{e.inspect}"
     $logger.fatal e.backtrace.join("\r\n")
     $logger.fatal "Do you need root access?"
-    connection.shutdown
     EventMachine.stop_event_loop
   end
 }
