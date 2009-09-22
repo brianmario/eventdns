@@ -17,7 +17,7 @@ require 'lib/eventdns'
 Dir.chdir(File.dirname(__FILE__))
 CONFIG = YAML.load_file('config.yml')
 
-logfile = File.new(CONFIG[:log_file], 'w+')
+logfile = File.new(CONFIG[:log_file], 'a') # Always append
 $logger = Logging.logger(logfile)
 $logger.level = CONFIG[:log_level]
 
@@ -26,6 +26,11 @@ EventMachine.run {
   connection = nil
   trap("INT") {
     $logger.info "ctrl+c caught, stopping server"
+    connection.shutdown
+    EventMachine.stop_event_loop
+  }
+  trap("TERM") {
+    $logger.info "TERM caught, stopping server"
     connection.shutdown
     EventMachine.stop_event_loop
   }

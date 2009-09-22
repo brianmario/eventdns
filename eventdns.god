@@ -13,8 +13,8 @@ God.pid_file_directory = pid_file
 God.watch do |w|
   w.name = "#{USER}-#{NAME}"
   w.interval = 30.seconds # default      
-  w.start = "start-stop-daemon --quiet --pidfile #{pid_file} --exec #{command} --start"
-  w.stop  = "start-stop-daemon --quiet --pidfile #{pid_file} --exec #{command} --stop"
+  w.start = "start-stop-daemon --quiet --pidfile #{pid_file} --exec #{command} --background --start"
+  w.stop  = "start-stop-daemon --quiet --pidfile #{pid_file} --stop"
   w.start_grace = 10.seconds
   w.restart_grace = 10.seconds
   w.pid_file = pid_file
