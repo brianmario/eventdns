@@ -32,8 +32,6 @@ class EventDns < EventMachine::Connection
     host = get_peername[2,6].unpack("nC4")
     @port = host.shift
     @host = host.join(".")
-    
-    $logger.info "Incoming packet from: #{client_info}"
   end
   
   def client_info

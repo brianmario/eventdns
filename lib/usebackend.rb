@@ -25,7 +25,6 @@ class UseBackend
     key = "#{q.qname}-#{q.qtype}-#{CONFIG[:base_url]}"
     query = @cache.get(key)
     if query == nil # cache miss
-      $logger.debug "Cache miss :("
       begin
         lookup = Backend::HTTP::Lookup.new()
         value = lookup.query({:name => q.qname,:type => q.qtype},CONFIG[:base_url])
@@ -35,6 +34,8 @@ class UseBackend
       end
       @cache.set(key,value)
       query = value
+    else
+      $logger.debug "Cache hit!"
     end
 
     # We are always sending a Query Response
