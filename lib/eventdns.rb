@@ -21,7 +21,7 @@ class EventDns < EventMachine::Connection
     error = true unless test.answer[0].name.to_s == 'pi.http.viadns.org'
     error = true unless test.answer[0].address.to_s == '3.14.159.26'
     if error
-      throw LoadError "Unable to run test query!"
+      raise LoadError, "Unable to run test query!"
     else
       $logger.debug "Test successful!"
     end
