@@ -6,5 +6,5 @@ RCODE 3 Name Error	 = 404 Not Found
 RCODE 4 Not Implemented  = 501 Not Implemented
 RCODE 5 Refused	         = 403 Forbidden
 
-RFC 1035:
+RFC 1035: http://tools.ietf.org/html/rfc1035
 HTTP Status Codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
