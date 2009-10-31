@@ -1,0 +1,46 @@
+<MESSAGE>
+-------
+{
+"header":{
+  "ID":"", # 16 bit ID
+  "QR":"", # boolean
+  "Opcode":"", # 0-15 (QUERY, IQUERY (obsolete), STATUS)
+  "AA":"", # boolean
+  "TC":"", # boolean
+  "RD":"", # boolean
+  "RA":"", # boolean
+  "RCODE":"", # 0-15 (no_error, format_error, server_failure, name_error, not_implemented, refused)
+  "QDCOUNT":"", # unsigned 16 bit integer - optional for HTTP? leave out by default?
+  "ANCOUNT":"", # unsigned 16 bit integer - optional for HTTP? leave out by default?
+  "NSCOUNT":"", # unsigned 16 bit integer - optional for HTTP? leave out by default?
+  "ARCOUNT":"" # unsigned 16 bit integer - optional for HTTP? leave out by default?
+},
+"question":[
+  {
+    "QNAME":"", # domain name
+    "QTYPE":"", # two octet code
+    "QCLASS":"", # two octet code
+ } #, [...]
+],
+"answer":[
+  { <RDATA> } #, [...]
+],
+"authority":[
+  { <RDATA> } #, [...]
+],
+"additional":[
+  { <RDATA> } #, [...]
+]
+}
+
+<RDATA>
+-----
+
+{
+  "NAME":"", # domain name
+  "TYPE":"", # two octet code
+  "CLASS":"",  # two octet code
+  "TTL":"", # 32 bit unsigned integer
+  "RDLENGTH":"", # 16 bit unsigned integer - optional for HTTP? leave out by default?
+  "RDATA":"", # variable length
+}
