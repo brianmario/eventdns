@@ -1,39 +1,5 @@
 = EventDns - An EventMachine based DNS server
 
-My goal of this project (to start) is nothing more than to learn how to write a DNS server using ruby.
+This is a fork of brianmario's eventdns sever which uses an HTTP server as the storage backend, allowing you to keep your DNS data in the same place as your web application.
 
-Currently, I plan on taking full advantage of the ruby language in combination with EventMachine's sweetness
-to eventually have a fully RFC 1035 compliant DNS server.
-
-== HTTP RR backend
-
-* enabled by default, test using: 'dig @127.0.0.1 -p 1053 pi.viadns.org' and 'dig @127.0.0.1 -p 1053 gmail.viadns.org'
-
-== Goals
-
-=== Dynamic configuration
-
-* database
-* web service(s)
-* monitored flat-file(s)
-
-=== Caching
-
-* in-memory
-* memcached
-
-=== API
-
-* REST? (json/xml)
-* TCP? (json/xml)
-
-== Dreams
-
-* everything written in C
-
-== Requirements
-
-* logging
-* eventmachine
-* dnsruby
-* a sweet bike
+Very beta, you probably shouldn't use this, it can't do negative dns caching yet.
