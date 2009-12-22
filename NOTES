@@ -1,5 +1,7 @@
 RFC 1035 4.1.1.          = HTTP Status Code
 -------------------------------------------
+RCODE 0 No Error, AA on  = 200 OK
+RCODE 0 No Error, AA off = 203 Non-Authoritative Information
 RCODE 1 Format error     = 400 Bad Request
 RCODE 2 Server Failure   = 503 Service Unavailable
 RCODE 3 Name Error	 = 404 Not Found
@@ -8,3 +10,6 @@ RCODE 5 Refused	         = 403 Forbidden
 
 RFC 1035: http://tools.ietf.org/html/rfc1035
 HTTP Status Codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+A HTTP DNS Client MUST assume that recursion IS NOT available unless the HTTP Header "X-DNS-Recursion: available" is present in the request.
+A HTTP DNS Server MUST assume that recursion IS desired unless the HTTP Header "X-DNS-Recursion: not-desired" is present in the request.
