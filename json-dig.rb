@@ -1,6 +1,7 @@
 # json-dig.rb
 #
-# Like dig(1) but return packet in JSON format!
+# Like dig(1) but returns data in the JSON format defined here: 
+# http://github.com/jpf/eventdns/blob/master/envelope-format
 #
 # usage: ruby json-dig.rb example.com A
 require 'rubygems'
